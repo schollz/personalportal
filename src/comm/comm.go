@@ -145,6 +145,11 @@ func (c *Comm) Read() (buf []byte, numBytes int, bs []byte, err error) {
 		return
 	}
 	numBytes = int(numBytesUint32)
+	if numBytes > MaxBytes {
+		err = fmt.Errorf("too many bytes: %d", numBytes)
+		log.Debug(err)
+		return
+	}
 
 	// shorten the reading deadline in case getting weird data
 	if err := c.connection.SetReadDeadline(time.Now().Add(10 * time.Second)); err != nil {
